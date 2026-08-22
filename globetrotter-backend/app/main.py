@@ -42,8 +42,8 @@ async def health_check():
 app.include_router(auth_router)
 app.include_router(cities_router)
 app.include_router(activities_router)
+app.include_router(trips_router)
 app.include_router(users_router, prefix="/api/v1/users", tags=["users"])
-app.include_router(trips_router, prefix="/api/v1/trips", tags=["trips"])
 app.include_router(stops_router, prefix="/api/v1/stops", tags=["stops"])
 app.include_router(
     trip_activities_router,
