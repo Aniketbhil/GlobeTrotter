@@ -28,30 +28,33 @@ export const Dashboard = () => {
 
   const totalTrips = groupedTrips.ongoing.length + groupedTrips.upcoming.length + groupedTrips.completed.length;
 
+  // FIXED: Wrapped the Card in a Link to the itinerary page
   const TripCard = ({ trip }) => (
-    <Card className="hover:border-primary/50 transition-colors group cursor-pointer">
-      <div className="h-32 bg-surface-muted rounded-t-2xl relative overflow-hidden">
-        {trip.cover_photo_url ? (
-          <img src={trip.cover_photo_url} alt={trip.name} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full bg-linear-to-br from-primary-soft to-surface-hover mix-blend-multiply flex items-center justify-center">
-            <MapPin className="text-primary opacity-50" size={32} />
+    <Link to={`/trips/${trip.id}/itinerary`} className="block h-full outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded-2xl">
+      <Card className="hover:border-primary/50 hover:shadow-md transition-all group cursor-pointer h-full">
+        <div className="h-32 bg-surface-muted rounded-t-2xl relative overflow-hidden">
+          {trip.cover_photo_url ? (
+            <img src={trip.cover_photo_url} alt={trip.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          ) : (
+            <div className="w-full h-full bg-linear-to-br from-primary-soft to-surface-hover flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+              <MapPin className="text-primary opacity-50" size={32} />
+            </div>
+          )}
+          <div className="absolute top-3 right-3">
+            <Badge variant={trip.status === 'ongoing' ? 'warning' : trip.status === 'upcoming' ? 'primary' : 'success'}>
+              {trip.status.charAt(0).toUpperCase() + trip.status.slice(1)}
+            </Badge>
           </div>
-        )}
-        <div className="absolute top-3 right-3">
-          <Badge variant={trip.status === 'ongoing' ? 'warning' : trip.status === 'upcoming' ? 'primary' : 'success'}>
-            {trip.status.charAt(0).toUpperCase() + trip.status.slice(1)}
-          </Badge>
         </div>
-      </div>
-      <CardContent className="pt-4">
-        <h3 className="font-manrope text-lg font-semibold text-text-primary truncate">{trip.name}</h3>
-        <div className="flex items-center gap-2 mt-2 text-sm text-text-secondary">
-          <Calendar size={14} />
-          <span>{new Date(trip.start_date).toLocaleDateString()} - {new Date(trip.end_date).toLocaleDateString()}</span>
-        </div>
-      </CardContent>
-    </Card>
+        <CardContent className="pt-4">
+          <h3 className="font-manrope text-lg font-semibold text-text-primary truncate">{trip.name}</h3>
+          <div className="flex items-center gap-2 mt-2 text-sm text-text-secondary">
+            <Calendar size={14} />
+            <span>{new Date(trip.start_date).toLocaleDateString()} - {new Date(trip.end_date).toLocaleDateString()}</span>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
   );
 
   return (
@@ -125,7 +128,7 @@ export const Dashboard = () => {
                 <span className="w-2 h-2 rounded-full bg-success inline-block"></span>
                 Completed Trips
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 opacity-75">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 opacity-75 hover:opacity-100 transition-opacity">
                 {groupedTrips.completed.map(trip => <TripCard key={trip.id} trip={trip} />)}
               </div>
             </section>
