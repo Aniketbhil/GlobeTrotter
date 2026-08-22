@@ -34,6 +34,11 @@ export const AppLayout = () => {
     { name: 'Explore', path: '/explore', icon: Compass },
   ];
 
+  // If user is admin, add the admin panel to the navigation
+  if (user?.is_admin) {
+    navItems.push({ name: 'Admin Panel', path: '/admin', icon: Settings });
+  }
+
   const handleLogout = () => {
     logout();
   };
