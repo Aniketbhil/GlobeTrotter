@@ -1,0 +1,1 @@
+"""Activities SQLAlchemy models."""

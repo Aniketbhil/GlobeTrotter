@@ -1,0 +1,1 @@
+"""Sharing service layer."""

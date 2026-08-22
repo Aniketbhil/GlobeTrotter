@@ -1,0 +1,1 @@
+"""Trips Pydantic schemas."""

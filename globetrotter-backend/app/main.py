@@ -1,0 +1,41 @@
+from fastapi import FastAPI
+
+from app.features.activities.router import router as activities_router
+from app.features.admin.router import router as admin_router
+from app.features.auth.router import router as auth_router
+from app.features.budget.router import router as budget_router
+from app.features.cities.router import router as cities_router
+from app.features.sharing.router import router as sharing_router
+from app.features.stops.router import router as stops_router
+from app.features.trip_activities.router import (
+    router as trip_activities_router,
+)
+from app.features.trips.router import router as trips_router
+from app.features.users.router import router as users_router
+
+app = FastAPI(
+    title="GlobeTrotter API",
+    version="0.1.0",
+    description="GlobeTrotter FastAPI backend service",
+)
+
+
+@app.get("/health", status_code=200)
+async def health_check():
+    return {"status": "ok"}
+
+
+app.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(users_router, prefix="/api/v1/users", tags=["users"])
+app.include_router(trips_router, prefix="/api/v1/trips", tags=["trips"])
+app.include_router(stops_router, prefix="/api/v1/stops", tags=["stops"])
+app.include_router(cities_router, prefix="/api/v1/cities", tags=["cities"])
+app.include_router(activities_router, prefix="/api/v1/activities", tags=["activities"])
+app.include_router(
+    trip_activities_router,
+    prefix="/api/v1/trip-activities",
+    tags=["trip-activities"],
+)
+app.include_router(budget_router, prefix="/api/v1/budget", tags=["budget"])
+app.include_router(sharing_router, prefix="/api/v1/sharing", tags=["sharing"])
+app.include_router(admin_router, prefix="/api/v1/admin", tags=["admin"])

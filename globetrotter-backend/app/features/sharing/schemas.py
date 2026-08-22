@@ -1,0 +1,1 @@
+"""Sharing Pydantic schemas."""

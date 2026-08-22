@@ -1,0 +1,1 @@
+"""Stops feature module."""
