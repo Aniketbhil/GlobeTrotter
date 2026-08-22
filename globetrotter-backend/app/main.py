@@ -1,5 +1,6 @@
 import os
 
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
@@ -26,6 +27,15 @@ app = FastAPI(
     description="GlobeTrotter FastAPI backend service",
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_origin=["http://localhost:5173", "http://localhost:5174", "http://localhost:5175"],
+    allow_credentials=True,
+    allow_methods=["*"],  
+    allow_headers=["*"],  
+)
+
 upload_base_dir = settings.UPLOAD_DIR.split("/")[0]
 os.makedirs(upload_base_dir, exist_ok=True)
 app.mount(
@@ -48,6 +58,6 @@ app.include_router(trips_router)
 app.include_router(stops_router)
 app.include_router(trip_activities_router)
 app.include_router(budget_router)
+app.include_router(sharing_router)
 app.include_router(users_router, prefix="/api/v1/users", tags=["users"])
-app.include_router(sharing_router, prefix="/api/v1/sharing", tags=["sharing"])
 app.include_router(admin_router, prefix="/api/v1/admin", tags=["admin"])
