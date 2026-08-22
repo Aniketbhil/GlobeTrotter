@@ -105,24 +105,24 @@
     --color-accent-hover: #F97316;
     --color-accent-soft: #431407;
 
-    --color-background: #0B1220;
-    --color-background-subtle: #0F172A;
+    --color-background: #121212;
+    --color-background-subtle: #09090b;
 
-    --color-surface: #111C2E;
-    --color-surface-elevated: #162338;
-    --color-surface-muted: #142033;
-    --color-surface-hover: #1B2A40;
+    --color-surface: #18181b;
+    --color-surface-elevated: #27272a;
+    --color-surface-muted: #27272a;
+    --color-surface-hover: #3f3f46;
 
-    --color-text-primary: #F8FAFC;
-    --color-text-secondary: #CBD5E1;
-    --color-text-muted: #94A3B8;
-    --color-text-disabled: #64748B;
-    --color-text-on-primary: #08111F;
-    --color-text-on-accent: #1C0A02;
+    --color-text-primary: #fafafa;
+    --color-text-secondary: #a1a1aa;
+    --color-text-muted: #71717a;
+    --color-text-disabled: #52525b;
+    --color-text-on-primary: #09090b;
+    --color-text-on-accent: #18181b;
 
-    --color-border-default: #26364D;
-    --color-border-strong: #3A4B63;
-    --color-border-subtle: #1E2C40;
+    --color-border-default: #27272a;
+    --color-border-strong: #3f3f46;
+    --color-border-subtle: #1f1f22;
     --color-border-focus: #60A5FA;
 
     --color-success: #4ADE80;
