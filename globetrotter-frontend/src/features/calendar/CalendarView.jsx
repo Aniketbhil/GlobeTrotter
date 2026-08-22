@@ -106,27 +106,27 @@ export const CalendarView = () => {
         </div>
       </div>
 
-      <Card className="overflow-hidden border-border-strong">
+      <div className="mt-2">
         {/* Days of week header */}
-        <div className="grid grid-cols-7 border-b border-border-strong bg-surface-muted">
+        <div className="grid grid-cols-7 mb-2">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-            <div key={day} className="p-3 text-center text-sm font-bold text-text-secondary uppercase tracking-wider">
+            <div key={day} className="p-2 text-center text-sm font-bold text-text-secondary uppercase tracking-wider">
               {day}
             </div>
           ))}
         </div>
 
         {/* Calendar Grid */}
-        <div className="grid grid-cols-7 bg-border-subtle gap-px">
+        <div className="grid grid-cols-7 gap-2 sm:gap-3">
           {isLoading ? (
-            <div className="col-span-7 p-20 text-center text-text-muted animate-pulse bg-surface">
+            <div className="col-span-7 p-20 text-center text-text-muted animate-pulse bg-surface rounded-2xl border border-border-subtle">
               Loading calendar data...
             </div>
           ) : (
             <>
               {/* Empty padding for start of month */}
               {blanks.map(blank => (
-                <div key={`blank-${blank}`} className="min-h-30 bg-surface-muted/30 p-2"></div>
+                <div key={`blank-${blank}`} className="min-h-[120px] p-2"></div>
               ))}
               
               {/* Actual Days */}
@@ -135,18 +135,18 @@ export const CalendarView = () => {
                 const isToday = day === currentDate.getDate() && currentMonth === (currentDate.getMonth() + 1) && currentYear === currentDate.getFullYear();
                 
                 return (
-                  <div key={day} className={`min-h-30 bg-surface p-2 transition-colors hover:bg-surface-hover ${isToday ? 'bg-primary-soft' : ''}`}>
+                  <div key={day} className={`min-h-[120px] p-2 sm:p-3 transition-colors rounded-2xl border border-border-subtle hover:border-primary/30 hover:shadow-sm ${isToday ? 'ring-2 ring-primary/50 bg-primary-soft/20' : 'bg-surface'}`}>
                     <div className="flex justify-between items-start mb-2">
-                      <span className={`text-sm font-semibold w-7 h-7 flex items-center justify-center rounded-full ${isToday ? 'bg-primary text-text-on-primary' : 'text-text-primary'}`}>
+                      <span className={`text-sm font-semibold w-7 h-7 flex items-center justify-center rounded-full ${isToday ? 'bg-primary text-text-on-primary shadow-sm' : 'text-text-primary'}`}>
                         {day}
                       </span>
                     </div>
                     
                     {/* Trip Bars */}
-                    <div className="space-y-1">
+                    <div className="space-y-1.5">
                       {dayTrips.map(trip => (
                         <Link key={trip.trip_id} to={`/trips/${trip.trip_id}/itinerary`} className="block">
-                          <div className={`text-xs px-2 py-1.5 rounded truncate font-medium shadow-sm transition-transform hover:scale-[1.02] ${getStatusColor(trip.status)}`}>
+                          <div className={`px-2 py-1.5 rounded-md text-[10px] uppercase font-bold truncate shadow-sm transition-transform hover:scale-[1.02] ${getStatusColor(trip.status)}`}>
                             {trip.name}
                           </div>
                         </Link>
@@ -158,7 +158,7 @@ export const CalendarView = () => {
             </>
           )}
         </div>
-      </Card>
+      </div>
     </div>
   );
 };

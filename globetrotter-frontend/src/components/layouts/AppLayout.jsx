@@ -54,7 +54,7 @@ export const AppLayout = () => {
           <img src={logo} alt="GlobeTrotter Logo" className="h-8 w-auto" onError={(e) => { e.target.style.display = 'none'; }} />
           <span className="font-manrope font-bold text-xl text-text-primary">GlobeTrotter</span>
         </div>
-        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-text-primary p-2">
+        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Toggle mobile menu" className="text-text-primary p-2">
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>

@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Search, MapPin, Activity as ActivityIcon, Clock, DollarSign, TrendingUp, Globe } from 'lucide-react';
+import { Search, MapPin, Activity as ActivityIcon, Clock, DollarSign, TrendingUp, Globe, Utensils, Compass, Camera, Landmark, GlassWater } from 'lucide-react';
 import { Card, CardContent } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { searchCities, searchActivities } from './exploreApi';
+import { getCityImage, getActivityImage } from '../../utils/imageResolver';
 
 export const Explore = () => {
   const [activeTab, setActiveTab] = useState('cities'); // 'cities' or 'activities'
@@ -99,24 +100,18 @@ export const Explore = () => {
           {/* CITIES TAB */}
           {activeTab === 'cities' && (
             cities.length === 0 ? (
-              <div className="col-span-full py-16 flex flex-col items-center text-center border-2 border-dashed border-border-strong rounded-2xl bg-surface-muted/50">
-                <Globe className="text-text-muted mb-3" size={40} />
+              <div className="col-span-full py-16 flex flex-col items-center justify-center text-center border-2 border-dashed border-border-strong rounded-2xl bg-surface-muted/50">
+                <Globe className="text-text-muted/50 mb-4" size={48} />
                 <h3 className="text-lg font-semibold text-text-primary">No cities found</h3>
                 <p className="text-text-secondary mt-1">Try searching for a different location.</p>
               </div>
             ) : (
               cities.map(city => (
-                <Card key={city.id} className="overflow-hidden hover:border-primary/40 hover:shadow-md transition-all group flex flex-col h-full">
+                <Card key={city.id} className="overflow-hidden hover:border-primary/40 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-in-out group flex flex-col h-full">
                   <div className="h-40 bg-surface-muted relative overflow-hidden border-b border-border-subtle shrink-0">
-                    {city.image_url ? (
-                      <img src={city.image_url} alt={city.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-primary-soft to-surface-hover group-hover:scale-105 transition-transform duration-500">
-                        <MapPin size={40} className="text-primary opacity-40" />
-                      </div>
-                    )}
+                    <img src={getCityImage(city.name, city.image_url)} alt={city.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     <div className="absolute top-3 right-3 flex gap-2">
-                      <Badge variant="success" className="shadow-sm border border-success/20">
+                      <Badge variant="success" className="shadow-sm border border-success/20 backdrop-blur-sm bg-success/90">
                         <TrendingUp size={12} className="mr-1" /> {city.popularity_score}
                       </Badge>
                     </div>
@@ -129,9 +124,10 @@ export const Explore = () => {
                     <div className="mt-4 pt-4 border-t border-border-subtle flex items-center justify-between">
                       <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">Cost Index</span>
                       <div className="flex gap-0.5 text-warning">
+                        <span className="sr-only">Cost {city.cost_index || 0} out of 5</span>
                         {/* Simple cost index visualizer (1 to 5 scale assumed) */}
                         {Array.from({ length: 5 }).map((_, i) => (
-                          <DollarSign key={i} size={14} className={i < city.cost_index ? "opacity-100" : "opacity-30"} />
+                          <DollarSign key={i} size={14} aria-hidden="true" className={i < city.cost_index ? "opacity-100" : "opacity-30"} />
                         ))}
                       </div>
                     </div>
@@ -144,24 +140,18 @@ export const Explore = () => {
           {/* ACTIVITIES TAB */}
           {activeTab === 'activities' && (
             activities.length === 0 ? (
-              <div className="col-span-full py-16 flex flex-col items-center text-center border-2 border-dashed border-border-strong rounded-2xl bg-surface-muted/50">
-                <ActivityIcon className="text-text-muted mb-3" size={40} />
+              <div className="col-span-full py-16 flex flex-col items-center justify-center text-center border-2 border-dashed border-border-strong rounded-2xl bg-surface-muted/50">
+                <ActivityIcon className="text-text-muted/50 mb-4" size={48} />
                 <h3 className="text-lg font-semibold text-text-primary">No activities found</h3>
                 <p className="text-text-secondary mt-1">Try adjusting your search criteria.</p>
               </div>
             ) : (
               activities.map(act => (
-                <Card key={act.id} className="overflow-hidden hover:border-accent/40 hover:shadow-md transition-all group flex flex-col h-full">
+                <Card key={act.id} className="overflow-hidden hover:border-accent/40 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-in-out group flex flex-col h-full">
                   <div className="h-40 bg-surface-muted relative overflow-hidden border-b border-border-subtle shrink-0">
-                    {act.image_url ? (
-                      <img src={act.image_url} alt={act.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-accent-soft to-surface-hover group-hover:scale-105 transition-transform duration-500">
-                        <ActivityIcon size={40} className="text-accent opacity-40" />
-                      </div>
-                    )}
+                    <img src={getActivityImage(act.name, act.type, act.image_url)} alt={act.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     <div className="absolute top-3 right-3">
-                      <Badge variant="accent" className="shadow-sm border border-accent/20 capitalize">
+                      <Badge variant="accent" className="shadow-sm border border-accent/20 capitalize backdrop-blur-sm bg-accent/90">
                         {act.type}
                       </Badge>
                     </div>

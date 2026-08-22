@@ -6,6 +6,7 @@ import { Card, CardContent } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { getGroupedTrips, deleteTrip } from './tripsApi';
 import { useAuthStore } from '../../store/authStore';
+import { getTripCoverImage } from '../../utils/imageResolver';
 
 export const Dashboard = () => {
   const { user } = useAuthStore();
@@ -49,17 +50,11 @@ export const Dashboard = () => {
       onClick={() => navigate(`/trips/${trip.id}/itinerary`)} 
       className="block h-full outline-none rounded-2xl cursor-pointer focus-visible:ring-2 focus-visible:ring-border-focus"
     >
-      <Card className="hover:border-primary/50 hover:shadow-md transition-all group h-full relative">
+      <Card className="hover:border-primary/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-in-out group h-full relative">
         <div className="h-32 bg-surface-muted rounded-t-2xl relative overflow-hidden">
-          {trip.cover_photo_url ? (
-            <img src={trip.cover_photo_url} alt={trip.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-          ) : (
-            <div className="w-full h-full bg-linear-to-br from-primary-soft to-surface-hover flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
-              <MapPin className="text-primary opacity-50" size={32} />
-            </div>
-          )}
+          <img src={getTripCoverImage(trip.name, trip.cover_photo_url)} alt={trip.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
           <div className="absolute top-3 left-3">
-            <Badge variant={trip.status === 'ongoing' ? 'warning' : trip.status === 'upcoming' ? 'primary' : 'success'}>
+            <Badge className="shadow-sm backdrop-blur-sm" variant={trip.status === 'ongoing' ? 'warning' : trip.status === 'upcoming' ? 'primary' : 'success'}>
               {trip.status.charAt(0).toUpperCase() + trip.status.slice(1)}
             </Badge>
           </div>
@@ -67,6 +62,7 @@ export const Dashboard = () => {
           {/* Delete Button */}
           <button 
             onClick={(e) => handleDeleteTrip(e, trip.id)}
+            aria-label="Delete Trip"
             className="absolute top-3 right-3 p-1.5 bg-surface/80 hover:bg-error hover:text-white text-error rounded-lg backdrop-blur-sm transition-colors opacity-0 group-hover:opacity-100"
             title="Delete Trip"
           >
@@ -109,11 +105,9 @@ export const Dashboard = () => {
           ))}
         </div>
       ) : totalTrips === 0 ? (
-        <Card className="flex flex-col items-center justify-center py-20 text-center border-dashed border-2">
-          <div className="w-16 h-16 bg-primary-soft rounded-full flex items-center justify-center mb-4 text-primary">
-            <MapPin size={32} />
-          </div>
-          <h3 className="text-xl font-semibold text-text-primary font-manrope">No trips planned yet</h3>
+        <Card className="flex flex-col items-center justify-center py-16 text-center border-dashed border-2 border-border-strong rounded-2xl bg-surface-muted/50">
+          <MapPin className="text-text-muted/50 mb-4" size={48} />
+          <h3 className="text-lg font-semibold text-text-primary font-manrope">No trips planned yet</h3>
           <p className="text-text-secondary max-w-sm mt-2 mb-6">
             The world is waiting for you. Start building your personalized multi-city itinerary today.
           </p>

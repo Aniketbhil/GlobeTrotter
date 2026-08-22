@@ -132,7 +132,7 @@ export const Profile = () => {
                 </Button>
               </div>
               {user?.photo_url && (
-                <Button variant="ghost" className="text-error hover:text-error hover:bg-error-soft" onClick={handlePhotoRemove}>
+                <Button variant="ghost" aria-label="Remove photo" className="text-error hover:text-error hover:bg-error-soft transition-colors" onClick={handlePhotoRemove}>
                   Remove
                 </Button>
               )}
@@ -152,7 +152,7 @@ export const Profile = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input label="Email Address" value={user?.email || ''} disabled className="bg-surface-muted opacity-60 cursor-not-allowed" />
+              <Input label="Email Address" value={user?.email || ''} disabled className="bg-surface-muted opacity-70 cursor-not-allowed" />
               <Input label="Phone Number" {...register('phone_number')} error={errors.phone_number?.message} />
             </div>
 
@@ -178,7 +178,7 @@ export const Profile = () => {
             <h2 className="text-xl font-bold font-manrope text-text-primary">Appearance</h2>
             <p className="text-sm text-text-secondary mt-1">Toggle between Light and Dark mode.</p>
           </div>
-          <Button variant="secondary" onClick={toggleTheme} className="gap-2">
+          <Button aria-label="Toggle theme" variant="secondary" onClick={toggleTheme} className="gap-2 transition-all duration-500 ease-in-out">
             {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
             {theme === 'light' ? 'Switch to Dark' : 'Switch to Light'}
           </Button>
@@ -192,7 +192,7 @@ export const Profile = () => {
           <p className="text-sm text-text-secondary mt-1 mb-4">
             Once you delete your account, there is no going back. All your itineraries and budgets will be wiped.
           </p>
-          <Button onClick={handleDeleteAccount} className="bg-error hover:bg-error/90 text-white gap-2">
+          <Button onClick={handleDeleteAccount} className="bg-error hover:bg-error-strong transition-colors text-white gap-2">
             <Trash2 size={16} /> Delete Account
           </Button>
         </CardContent>

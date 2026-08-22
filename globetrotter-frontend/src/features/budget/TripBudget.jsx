@@ -83,36 +83,48 @@ export const TripBudget = () => {
         <CategoryCard title="Meals" amount={category_totals.meals} percent={getPercentage(category_totals.meals)} icon={Utensils} colorClass="text-success bg-success" bgSoftClass="bg-success-soft" />
       </div>
 
-      {/* Destination Breakdown Table */}
+      {/* Destination Breakdown Cards */}
       {budget.stops.length > 0 && (
         <>
           <h2 className="text-xl font-bold font-manrope text-text-primary mt-8 mb-4">By Destination</h2>
-          <Card className="overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-surface-muted text-text-secondary">
-                  <tr>
-                    <th className="px-6 py-4 font-semibold">City</th>
-                    <th className="px-6 py-4 font-semibold text-right">Nights</th>
-                    <th className="px-6 py-4 font-semibold text-right">Stay</th>
-                    <th className="px-6 py-4 font-semibold text-right">Activities</th>
-                    <th className="px-6 py-4 font-semibold text-right">Total</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border-subtle bg-surface">
-                  {budget.stops.map(stop => (
-                    <tr key={stop.stop_id} className="hover:bg-surface-hover transition-colors">
-                      <td className="px-6 py-4 font-medium text-text-primary">{stop.city?.name}</td>
-                      <td className="px-6 py-4 text-right text-text-secondary">{stop.nights}</td>
-                      <td className="px-6 py-4 text-right text-text-secondary">${stop.stay_cost}</td>
-                      <td className="px-6 py-4 text-right text-text-secondary">${stop.activity_cost}</td>
-                      <td className="px-6 py-4 text-right font-bold text-text-primary">${stop.stop_total}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {budget.stops.map(stop => (
+              <Card key={stop.stop_id} className="bg-surface hover:border-primary/50 transition-colors shadow-sm">
+                <CardContent className="p-5">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-lg font-bold text-text-primary font-manrope">{stop.city?.name}</h3>
+                      <p className="text-sm text-text-secondary mt-0.5">{stop.nights} Nights</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Total</p>
+                      <p className="text-2xl font-bold text-primary">${stop.stop_total}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-6 border-t border-border-subtle pt-3 mt-1">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 bg-info-soft text-info rounded-md">
+                        <Bed size={14} />
+                      </div>
+                      <div>
+                        <p className="text-xs text-text-muted">Stay</p>
+                        <p className="text-sm font-semibold text-text-primary">${stop.stay_cost}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 bg-accent-soft text-accent rounded-md">
+                        <Activity size={14} />
+                      </div>
+                      <div>
+                        <p className="text-xs text-text-muted">Activities</p>
+                        <p className="text-sm font-semibold text-text-primary">${stop.activity_cost}</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </>
       )}
     </div>
