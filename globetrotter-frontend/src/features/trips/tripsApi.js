@@ -6,3 +6,8 @@ export const getGroupedTrips = async () => {
   });
   return response.data;
 };
+
+export const createTrip = async (tripData) => {
+  const response = await api.post('/api/trips', tripData);
+  return response.data;
+};
