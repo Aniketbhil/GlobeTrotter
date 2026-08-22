@@ -6,6 +6,7 @@ from sqlalchemy import engine_from_config, pool
 # Import feature models so metadata is populated
 import app.features.activities.models
 import app.features.auth.models
+import app.features.budget.models
 import app.features.cities.models
 import app.features.sharing.models
 import app.features.stops.models

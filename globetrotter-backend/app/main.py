@@ -9,6 +9,7 @@ from app.features.admin.router import router as admin_router
 from app.features.auth.router import router as auth_router
 from app.features.budget.router import router as budget_router
 from app.features.cities.router import router as cities_router
+from app.features.itinerary.router import router as itinerary_router
 from app.features.sharing.router import router as sharing_router
 from app.features.stops.router import router as stops_router
 from app.features.trip_activities.router import (
@@ -42,10 +43,11 @@ async def health_check():
 app.include_router(auth_router)
 app.include_router(cities_router)
 app.include_router(activities_router)
+app.include_router(itinerary_router)
 app.include_router(trips_router)
 app.include_router(stops_router)
 app.include_router(trip_activities_router)
+app.include_router(budget_router)
 app.include_router(users_router, prefix="/api/v1/users", tags=["users"])
-app.include_router(budget_router, prefix="/api/v1/budget", tags=["budget"])
 app.include_router(sharing_router, prefix="/api/v1/sharing", tags=["sharing"])
 app.include_router(admin_router, prefix="/api/v1/admin", tags=["admin"])

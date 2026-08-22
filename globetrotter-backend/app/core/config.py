@@ -23,5 +23,10 @@ class Settings(BaseSettings):
     ]
     PUBLIC_BASE_URL: str = "http://localhost:8000"
 
+    # Placeholder budget multipliers for category cost formulas. Tune against real data later.
+    TRANSPORT_COST_MULTIPLIER: float = 15.0
+    STAY_COST_MULTIPLIER: float = 25.0
+    MEAL_COST_PER_DAY: float = 30.0
+
 
 settings = Settings()
