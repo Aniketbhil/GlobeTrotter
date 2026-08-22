@@ -9,10 +9,11 @@ import { CreateTrip } from './features/trips/CreateTrip';
 import { ItineraryBuilder } from './features/itinerary/ItineraryBuilder';
 import { TripBudget } from './features/budget/TripBudget';
 import { CalendarView } from './features/calendar/CalendarView';
-import { Profile } from './features/profile/Profile'; // <--- NEW IMPORT
+import { Profile } from './features/profile/Profile';
+import { PublicItinerary } from './features/sharing/PublicItinerary'; // <--- NEW IMPORT
 import { AppLayout } from './components/layouts/AppLayout';
 import { useAuthStore } from './store/authStore';
-import { useThemeStore } from './store/themeStore'; // <--- NEW IMPORT
+import { useThemeStore } from './store/themeStore';
 
 const ProtectedRoute = ({ children }) => {
   const token = useAuthStore(state => state.token);
@@ -23,7 +24,6 @@ const ProtectedRoute = ({ children }) => {
 export default function App() {
   const initTheme = useThemeStore(state => state.initTheme);
 
-  // Initialize theme on app load
   useEffect(() => {
     initTheme();
   }, [initTheme]);
@@ -36,12 +36,15 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         
-        {/* App Shell Routes */}
+        {/* PUBLIC ROUTE - Anyone can view this without logging in */}
+        <Route path="/shared/:slug" element={<PublicItinerary />} />
+        
+        {/* Protected App Shell Routes */}
         <Route path="/" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="calendar" element={<CalendarView />} />
-          <Route path="profile" element={<Profile />} /> {/* <--- NEW ROUTE */}
+          <Route path="profile" element={<Profile />} />
           
           <Route path="trips/new" element={<CreateTrip />} />
           <Route path="trips/:tripId/itinerary" element={<ItineraryBuilder />} />

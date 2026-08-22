@@ -6,6 +6,8 @@ import { Card, CardContent } from '../../components/ui/Card';
 import { getItinerary } from './itineraryApi';
 import { AddStopModal } from './AddStopModal';
 import { AddActivityModal } from './AddActivityModal';
+import { Share2 } from 'lucide-react';
+import { ShareTripModal } from '../sharing/ShareTripModal';
 
 export const ItineraryBuilder = () => {
   const { tripId } = useParams();
@@ -14,6 +16,7 @@ export const ItineraryBuilder = () => {
   
   const [isAddStopModalOpen, setIsAddStopModalOpen] = useState(false);
   const [activityModalData, setActivityModalData] = useState({ isOpen: false, day: null });
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const fetchItinerary = useCallback(async () => {
     setIsLoading(true);
@@ -54,6 +57,9 @@ export const ItineraryBuilder = () => {
         
         {/* Updated Header Actions (Includes Budget Link) */}
         <div className="flex gap-3 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+          <Button variant="secondary" onClick={() => setIsShareModalOpen(true)} className="gap-2 shrink-0">
+            <Share2 size={18} /> Share
+          </Button>
           <Link to={`/trips/${tripId}/budget`}>
             <Button variant="secondary" className="gap-2 shrink-0">
                View Budget
@@ -150,6 +156,12 @@ export const ItineraryBuilder = () => {
         tripId={tripId}
         selectedDay={activityModalData.day}
         onActivityAdded={fetchItinerary}
+      />
+
+      <ShareTripModal 
+        isOpen={isShareModalOpen} 
+        onClose={() => setIsShareModalOpen(false)} 
+        tripId={tripId} 
       />
     </div>
   );
