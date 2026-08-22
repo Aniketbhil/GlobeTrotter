@@ -1,1 +1,145 @@
 @import "tailwindcss";
+
+@theme {
+  --font-inter: "Inter", system-ui, sans-serif;
+  --font-manrope: "Manrope", system-ui, sans-serif;
+
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-primary-active: var(--color-primary-active);
+  --color-primary-soft: var(--color-primary-soft);
+  --color-primary-contrast: var(--color-primary-contrast);
+
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-soft: var(--color-accent-soft);
+
+  --color-background: var(--color-background);
+  --color-background-subtle: var(--color-background-subtle);
+  
+  --color-surface: var(--color-surface);
+  --color-surface-elevated: var(--color-surface-elevated);
+  --color-surface-muted: var(--color-surface-muted);
+  --color-surface-hover: var(--color-surface-hover);
+
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-disabled: var(--color-text-disabled);
+  --color-text-on-primary: var(--color-text-on-primary);
+  --color-text-on-accent: var(--color-text-on-accent);
+
+  --color-border-default: var(--color-border-default);
+  --color-border-strong: var(--color-border-strong);
+  --color-border-subtle: var(--color-border-subtle);
+  --color-border-focus: var(--color-border-focus);
+
+  --color-success: var(--color-success);
+  --color-success-soft: var(--color-success-soft);
+  --color-warning: var(--color-warning);
+  --color-warning-soft: var(--color-warning-soft);
+  --color-error: var(--color-error);
+  --color-error-soft: var(--color-error-soft);
+  --color-info: var(--color-info);
+  --color-info-soft: var(--color-info-soft);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+}
+
+@layer base {
+  :root {
+    /* Light Theme[cite: 9] */
+    --color-primary: #2563EB;
+    --color-primary-hover: #1D4ED8;
+    --color-primary-active: #1E40AF;
+    --color-primary-soft: #EFF6FF;
+    --color-primary-contrast: #FFFFFF;
+
+    --color-accent: #F97316;
+    --color-accent-hover: #EA580C;
+    --color-accent-soft: #FFF7ED;
+
+    --color-background: #F8FAFC;
+    --color-background-subtle: #F1F5F9;
+
+    --color-surface: #FFFFFF;
+    --color-surface-elevated: #FFFFFF;
+    --color-surface-muted: #F8FAFC;
+    --color-surface-hover: #F1F5F9;
+
+    --color-text-primary: #0F172A;
+    --color-text-secondary: #475569;
+    --color-text-muted: #64748B;
+    --color-text-disabled: #94A3B8;
+    --color-text-on-primary: #FFFFFF;
+    --color-text-on-accent: #FFFFFF;
+
+    --color-border-default: #E2E8F0;
+    --color-border-strong: #CBD5E1;
+    --color-border-subtle: #EEF2F7;
+    --color-border-focus: #2563EB;
+
+    --color-success: #16A34A;
+    --color-success-soft: #F0FDF4;
+    --color-warning: #D97706;
+    --color-warning-soft: #FFFBEB;
+    --color-error: #DC2626;
+    --color-error-soft: #FEF2F2;
+    --color-info: #0284C7;
+    --color-info-soft: #F0F9FF;
+  }
+
+  .dark {
+    /* Dark Theme[cite: 9] */
+    --color-primary: #60A5FA;
+    --color-primary-hover: #3B82F6;
+    --color-primary-active: #2563EB;
+    --color-primary-soft: #172554;
+    --color-primary-contrast: #0B1220;
+
+    --color-accent: #FB923C;
+    --color-accent-hover: #F97316;
+    --color-accent-soft: #431407;
+
+    --color-background: #0B1220;
+    --color-background-subtle: #0F172A;
+
+    --color-surface: #111C2E;
+    --color-surface-elevated: #162338;
+    --color-surface-muted: #142033;
+    --color-surface-hover: #1B2A40;
+
+    --color-text-primary: #F8FAFC;
+    --color-text-secondary: #CBD5E1;
+    --color-text-muted: #94A3B8;
+    --color-text-disabled: #64748B;
+    --color-text-on-primary: #08111F;
+    --color-text-on-accent: #1C0A02;
+
+    --color-border-default: #26364D;
+    --color-border-strong: #3A4B63;
+    --color-border-subtle: #1E2C40;
+    --color-border-focus: #60A5FA;
+
+    --color-success: #4ADE80;
+    --color-success-soft: #052E16;
+    --color-warning: #FBBF24;
+    --color-warning-soft: #451A03;
+    --color-error: #F87171;
+    --color-error-soft: #450A0A;
+    --color-info: #38BDF8;
+    --color-info-soft: #082F49;
+  }
+
+  body {
+    @apply bg-background text-text-primary font-inter antialiased transition-colors duration-200;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-manrope tracking-tight;
+  }
+}
