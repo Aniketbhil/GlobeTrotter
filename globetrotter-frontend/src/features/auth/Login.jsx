@@ -38,24 +38,32 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
-        <div className="mx-auto w-full max-w-sm lg:w-100">
+    <div className="flex min-h-screen bg-background overflow-hidden">
+      {/* Image Side (Left) */}
+      <div className="relative hidden lg:flex lg:w-1/2 bg-surface-muted border-r border-border-default animate-in slide-in-from-left-8 fade-in duration-500">
+        <div className="absolute inset-0 h-full w-full">
+           <img 
+            src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2021&auto=format&fit=crop" 
+            alt="Travel map" 
+            className="h-full w-full object-cover"
+          />
+          {/* Dark overlay for contrast */}
+          <div className="absolute inset-0 bg-black/20" />
+          {/* Dark gradient for text readability */}
+          <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-12 xl:p-16">
+             <h2 className="text-4xl font-bold text-white mb-4">Design your dream journey.</h2>
+             <p className="text-lg text-white/90 max-w-lg">Explore global destinations, visualize your itinerary, and manage your budget seamlessly.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Form Side (Right) */}
+      <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:w-1/2 lg:px-20 xl:px-24 z-10 bg-surface animate-in slide-in-from-right-8 fade-in duration-500">
+        <div className="mx-auto w-full max-w-md">
           <div className="mb-8">
-            <img 
-              src={logo} 
-              alt="GlobeTrotter" 
-              className="h-10 w-auto mb-10" 
-              onError={(e) => {
-                e.target.style.display = 'none';
-              }} 
-            />
-            <h1 className="text-3xl font-bold tracking-tight text-text-primary">
-              Welcome back
-            </h1>
-            <p className="mt-2 text-sm text-text-secondary">
-              Sign in to manage your personalized travel plans.
-            </p>
+            <img src={logo} alt="GlobeTrotter" className="h-10 w-auto mb-8" onError={(e) => e.target.style.display = 'none'} />
+            <h1 className="text-3xl font-bold tracking-tight text-text-primary">Welcome back</h1>
+            <p className="mt-2 text-sm text-text-secondary">Sign in to manage your personalized travel plans.</p>
           </div>
 
           {successMessage && (
@@ -74,7 +82,6 @@ export const Login = () => {
             <Input 
               label="Email Address" 
               type="email" 
-              placeholder="name@example.com"
               {...register('email')} 
               error={errors.email?.message} 
             />
@@ -83,18 +90,17 @@ export const Login = () => {
               <Input 
                 label="Password" 
                 type="password" 
-                placeholder="••••••••"
                 {...register('password')} 
                 error={errors.password?.message} 
               />
-              <div className="flex justify-end">
-                <Link to="#" className="text-sm font-medium text-primary hover:text-primary-hover">
+              <div className="flex justify-end mt-1">
+                <Link to="/forgot-password" className="text-sm font-medium text-primary hover:text-primary-hover">
                   Forgot password?
                 </Link>
               </div>
             </div>
             
-            <Button type="submit" size="lg" className="w-full mt-4" isLoading={isSubmitting}>
+            <Button type="submit" size="lg" className="w-full mt-6" isLoading={isSubmitting}>
               Sign In
             </Button>
           </form>
@@ -105,21 +111,6 @@ export const Login = () => {
               Sign up for free
             </Link>
           </p>
-        </div>
-      </div>
-
-      <div className="relative hidden w-0 flex-1 lg:block bg-surface-muted">
-        <div className="absolute inset-0 h-full w-full object-cover bg-primary-soft flex items-center justify-center p-12">
-           {/* Placeholder for a beautiful travel image. We use CSS gradient to keep it premium until you add a real photo */}
-           <div className="absolute inset-0 bg-linear-to-br from-primary/10 to-accent/10 mix-blend-multiply" />
-           <div className="relative z-10 max-w-xl text-center">
-             <h2 className="text-4xl font-bold text-primary mb-6">
-                Design your dream journey.
-             </h2>
-             <p className="text-lg text-text-secondary leading-relaxed">
-                Explore global destinations, visualize your itinerary, and manage your travel budget all in one beautiful platform.
-             </p>
-           </div>
         </div>
       </div>
     </div>
