@@ -6,7 +6,8 @@ import { ResetPassword } from './features/auth/ResetPassword';
 import { Dashboard } from './features/trips/Dashboard';
 import { CreateTrip } from './features/trips/CreateTrip';
 import { ItineraryBuilder } from './features/itinerary/ItineraryBuilder';
-import { TripBudget } from './features/budget/TripBudget'; // <--- NEW
+import { TripBudget } from './features/budget/TripBudget';
+import { CalendarView } from './features/calendar/CalendarView'; // <--- NEW IMPORT
 import { AppLayout } from './components/layouts/AppLayout';
 import { useAuthStore } from './store/authStore';
 
@@ -29,10 +30,11 @@ export default function App() {
         <Route path="/" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="calendar" element={<CalendarView />} /> {/* <--- NEW ROUTE */}
           
           <Route path="trips/new" element={<CreateTrip />} />
           <Route path="trips/:tripId/itinerary" element={<ItineraryBuilder />} />
-          <Route path="trips/:tripId/budget" element={<TripBudget />} /> {/* <--- NEW */}
+          <Route path="trips/:tripId/budget" element={<TripBudget />} />
         </Route>
         
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
