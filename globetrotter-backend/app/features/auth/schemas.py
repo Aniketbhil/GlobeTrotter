@@ -18,6 +18,16 @@ class SignupRequest(BaseModel):
     photo_url: str | None = None
 
 
+class UserUpdate(BaseModel):
+    first_name: str | None = None
+    last_name: str | None = None
+    phone_number: str | None = None
+    city: str | None = None
+    country: str | None = None
+    additional_info: str | None = None
+    language: str | None = None
+
+
 class LoginRequest(BaseModel):
     # NOTE: Accepts either an email address or a phone number.
     # The frontend should label this input field "Email or Phone" instead of "Username".

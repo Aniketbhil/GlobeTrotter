@@ -12,14 +12,17 @@ from app.features.auth.schemas import (
     SignupRequest,
     TokenResponse,
     UserResponse,
+    UserUpdate,
 )
 from app.features.auth.service import (
     authenticate_user,
+    delete_user_account,
     delete_user_photo,
     generate_reset_token,
     reset_password,
     signup_user,
     update_user_photo,
+    update_user_profile,
 )
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -62,6 +65,24 @@ def reset_password_endpoint(data: ResetPasswordRequest, db: Session = Depends(ge
 @router.get("/me", response_model=UserResponse)
 def get_me(current_user: User = Depends(get_current_user)):
     return current_user
+
+
+@router.patch("/me", response_model=UserResponse)
+def update_me(
+    data: UserUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    return update_user_profile(db, current_user, data)
+
+
+@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
+def delete_me(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    storage: StorageBackend = Depends(get_storage),
+):
+    delete_user_account(db, current_user, storage)
 
 
 @router.post("/me/photo", response_model=UserResponse)

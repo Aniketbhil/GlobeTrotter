@@ -1,8 +1,13 @@
 import io
+import uuid
 
 from fastapi.testclient import TestClient
 
 from app.core.security import create_access_token
+from app.features.auth.schemas import UserUpdate
+from app.features.stops.models import Stop
+from app.features.trip_activities.models import TripActivity
+from app.features.trips.models import Trip
 
 
 def test_signup_all_fields_succeeds(client: TestClient):
@@ -389,3 +394,302 @@ def test_delete_photo_when_none_exists(client: TestClient):
     del_res = client.delete("/api/auth/me/photo", headers=headers)
     assert del_res.status_code == 200
     assert del_res.json()["photo_url"] is None
+
+
+# --- PROFILE UPDATE & ACCOUNT DELETION TESTS ---
+
+
+def test_patch_me_without_token_returns_401(client: TestClient):
+    res = client.patch("/api/auth/me", json={"first_name": "NewName"})
+    assert res.status_code == 401
+
+
+def test_patch_me_partial_update_first_name(client: TestClient):
+    signup_payload = {
+        "email": "patchuser@globetrotter.com",
+        "password": "Password123!",
+        "first_name": "OldFirst",
+        "last_name": "OldLast",
+        "city": "OldCity",
+    }
+    client.post("/api/auth/signup", json=signup_payload)
+    login_res = client.post(
+        "/api/auth/login",
+        data={
+            "username": "patchuser@globetrotter.com",
+            "password": "Password123!",
+        },
+    )
+    token = login_res.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    patch_res = client.patch(
+        "/api/auth/me", headers=headers, json={"first_name": "NewFirst"}
+    )
+    assert patch_res.status_code == 200
+    data = patch_res.json()
+    assert data["first_name"] == "NewFirst"
+    assert data["last_name"] == "OldLast"
+    assert data["city"] == "OldCity"
+
+
+def test_patch_me_duplicate_phone_number_conflict(client: TestClient):
+    client.post(
+        "/api/auth/signup",
+        json={
+            "email": "phone1@globetrotter.com",
+            "password": "Password123!",
+            "first_name": "User",
+            "last_name": "One",
+            "phone_number": "+1111111111",
+        },
+    )
+    client.post(
+        "/api/auth/signup",
+        json={
+            "email": "phone2@globetrotter.com",
+            "password": "Password123!",
+            "first_name": "User",
+            "last_name": "Two",
+        },
+    )
+    login_res = client.post(
+        "/api/auth/login",
+        data={
+            "username": "phone2@globetrotter.com",
+            "password": "Password123!",
+        },
+    )
+    token = login_res.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    res = client.patch(
+        "/api/auth/me", headers=headers, json={"phone_number": "+1111111111"}
+    )
+    assert res.status_code == 409
+
+
+def test_patch_me_own_phone_number_unchanged_succeeds(client: TestClient):
+    client.post(
+        "/api/auth/signup",
+        json={
+            "email": "ownphone@globetrotter.com",
+            "password": "Password123!",
+            "first_name": "Own",
+            "last_name": "Phone",
+            "phone_number": "+1222222222",
+        },
+    )
+    login_res = client.post(
+        "/api/auth/login",
+        data={
+            "username": "ownphone@globetrotter.com",
+            "password": "Password123!",
+        },
+    )
+    token = login_res.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    res = client.patch(
+        "/api/auth/me",
+        headers=headers,
+        json={"phone_number": "+1222222222", "first_name": "UpdatedOwn"},
+    )
+    assert res.status_code == 200
+    assert res.json()["first_name"] == "UpdatedOwn"
+    assert res.json()["phone_number"] == "+1222222222"
+
+
+def test_patch_me_disallowed_fields_ignored_by_schema(client: TestClient):
+    assert "email" not in UserUpdate.model_fields
+    assert "password" not in UserUpdate.model_fields
+    assert "is_admin" not in UserUpdate.model_fields
+    assert "photo_url" not in UserUpdate.model_fields
+
+    client.post(
+        "/api/auth/signup",
+        json={
+            "email": "disallowed@globetrotter.com",
+            "password": "Password123!",
+            "first_name": "Disallowed",
+            "last_name": "User",
+        },
+    )
+    login_res = client.post(
+        "/api/auth/login",
+        data={
+            "username": "disallowed@globetrotter.com",
+            "password": "Password123!",
+        },
+    )
+    token = login_res.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    res = client.patch(
+        "/api/auth/me",
+        headers=headers,
+        json={
+            "email": "hacked@globetrotter.com",
+            "is_admin": True,
+            "photo_url": "https://hacked.com/pic.jpg",
+            "first_name": "AllowedName",
+        },
+    )
+    assert res.status_code == 200
+    data = res.json()
+    assert data["email"] == "disallowed@globetrotter.com"
+    assert data["is_admin"] is False
+    assert data["photo_url"] is None
+    assert data["first_name"] == "AllowedName"
+
+
+def test_delete_me_without_token_returns_401(client: TestClient):
+    res = client.delete("/api/auth/me")
+    assert res.status_code == 401
+
+
+def test_delete_me_authenticated_user_succeeds(client: TestClient):
+    client.post(
+        "/api/auth/signup",
+        json={
+            "email": "deleteaccount@globetrotter.com",
+            "password": "Password123!",
+            "first_name": "Del",
+            "last_name": "Account",
+        },
+    )
+    login_res = client.post(
+        "/api/auth/login",
+        data={
+            "username": "deleteaccount@globetrotter.com",
+            "password": "Password123!",
+        },
+    )
+    token = login_res.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    del_res = client.delete("/api/auth/me", headers=headers)
+    assert del_res.status_code == 204
+
+    # Subsequent GET /api/auth/me fails 401
+    me_res = client.get("/api/auth/me", headers=headers)
+    assert me_res.status_code == 401
+
+
+def test_delete_me_cascades_trips_stops_and_activities(
+    client: TestClient, db_session, admin_token: str
+):
+    auth_admin = {"Authorization": f"Bearer {admin_token}"}
+    c_id = client.post(
+        "/api/cities",
+        headers=auth_admin,
+        json={"name": "CascadeCity", "country": "CascadeCountry"},
+    ).json()["id"]
+    act_id = client.post(
+        "/api/activities",
+        headers=auth_admin,
+        json={
+            "city_id": c_id,
+            "name": "CascadeAct",
+            "type": "sightseeing",
+            "cost": 10.0,
+        },
+    ).json()["id"]
+
+    # User creates trip -> stop -> trip_activity
+    client.post(
+        "/api/auth/signup",
+        json={
+            "email": "cascadeuser@globetrotter.com",
+            "password": "Password123!",
+            "first_name": "Cascade",
+            "last_name": "User",
+        },
+    )
+    login_res = client.post(
+        "/api/auth/login",
+        data={
+            "username": "cascadeuser@globetrotter.com",
+            "password": "Password123!",
+        },
+    )
+    token = login_res.json()["access_token"]
+    auth_user = {"Authorization": f"Bearer {token}"}
+
+    trip = client.post(
+        "/api/trips",
+        headers=auth_user,
+        json={
+            "name": "Cascade Trip",
+            "start_date": "2026-09-01",
+            "end_date": "2026-09-05",
+        },
+    ).json()
+
+    stop = client.post(
+        f"/api/trips/{trip['id']}/stops",
+        headers=auth_user,
+        json={
+            "city_id": c_id,
+            "start_date": "2026-09-01",
+            "end_date": "2026-09-05",
+        },
+    ).json()
+
+    client.post(
+        f"/api/trips/{trip['id']}/stops/{stop['id']}/activities",
+        headers=auth_user,
+        json={"activity_id": act_id, "scheduled_date": "2026-09-01"},
+    )
+
+    # Delete user account
+    del_res = client.delete("/api/auth/me", headers=auth_user)
+    assert del_res.status_code == 204
+
+    # Verify directly in DB that trip, stop, trip_activity are gone
+    trip_uuid = uuid.UUID(trip["id"])
+    stop_uuid = uuid.UUID(stop["id"])
+    assert db_session.query(Trip).filter(Trip.id == trip_uuid).first() is None
+    assert db_session.query(Stop).filter(Stop.id == stop_uuid).first() is None
+    assert (
+        db_session.query(TripActivity).filter(TripActivity.stop_id == stop_uuid).first()
+        is None
+    )
+
+
+def test_delete_me_removes_profile_photo_file(client: TestClient):
+    client.post(
+        "/api/auth/signup",
+        json={
+            "email": "delphotouser@globetrotter.com",
+            "password": "Password123!",
+            "first_name": "DelPhoto",
+            "last_name": "User",
+        },
+    )
+    login_res = client.post(
+        "/api/auth/login",
+        data={
+            "username": "delphotouser@globetrotter.com",
+            "password": "Password123!",
+        },
+    )
+    token = login_res.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    fake_jpeg = b"\xff\xd8\xff\xe0\x00\x10JFIF"
+    file_tuple = ("profile.jpg", io.BytesIO(fake_jpeg), "image/jpeg")
+
+    up_res = client.post(
+        "/api/auth/me/photo", headers=headers, files={"file": file_tuple}
+    )
+    photo_url = up_res.json()["photo_url"]
+    photo_path = photo_url.replace("http://localhost:8000", "")
+
+    # Delete user account
+    del_res = client.delete("/api/auth/me", headers=headers)
+    assert del_res.status_code == 204
+
+    # Photo file is removed from disk (GET returns 404)
+    serve_res = client.get(photo_path)
+    assert serve_res.status_code == 404

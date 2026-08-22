@@ -20,7 +20,7 @@ from app.core.security import (
 )
 from app.core.storage import StorageBackend
 from app.features.auth.models import User
-from app.features.auth.schemas import SignupRequest
+from app.features.auth.schemas import SignupRequest, UserUpdate
 
 logger = logging.getLogger(__name__)
 
@@ -135,6 +135,41 @@ def reset_password(db: Session, token: str, new_password: str) -> None:
         raise NotFoundError("User not found")
 
     user.hashed_password = hash_password(new_password)
+    db.commit()
+
+
+def update_user_profile(db: Session, user: User, data: UserUpdate) -> User:
+    update_data = data.model_dump(exclude_unset=True)
+
+    if "phone_number" in update_data:
+        new_phone = update_data["phone_number"]
+        if new_phone is not None and new_phone != user.phone_number:
+            existing_phone = (
+                db.query(User)
+                .filter(User.phone_number == new_phone, User.id != user.id)
+                .first()
+            )
+            if existing_phone:
+                raise ConflictError("Phone number already registered")
+
+    for field, value in update_data.items():
+        setattr(user, field, value)
+
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+def delete_user_account(
+    db: Session, user: User, storage: StorageBackend | None = None
+) -> None:
+    if user.photo_url and storage:
+        try:
+            storage.delete(user.photo_url)
+        except Exception as e:  # noqa: BLE001
+            logger.warning("Could not delete user photo during account deletion: %s", e)
+
+    db.delete(user)
     db.commit()
 
 
