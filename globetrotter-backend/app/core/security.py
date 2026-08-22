@@ -1,34 +1,53 @@
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
-from jose import jwt
-from passlib.context import CryptContext
+import bcrypt
+from jose import JWTError, jwt
 
+from app.common.exceptions import UnauthorizedException
 from app.core.config import settings
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def hash_password(password: str) -> str:
+    pwd_bytes = password.encode("utf-8")
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(pwd_bytes, salt).decode("utf-8")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
-
-
-def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    try:
+        return bcrypt.checkpw(
+            plain_password.encode("utf-8"), hashed_password.encode("utf-8")
+        )
+    except (ValueError, TypeError):
+        return False
 
 
 def create_access_token(
-    data: dict[str, Any], expires_delta: timedelta | None = None
+    subject: str,
+    expires_minutes: int | None = None,
+    additional_claims: dict[str, Any] | None = None,
 ) -> str:
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.now(UTC) + expires_delta
+    if expires_minutes is not None:
+        expire = datetime.now(UTC) + timedelta(minutes=expires_minutes)
     else:
         expire = datetime.now(UTC) + timedelta(
             minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
         )
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(
+
+    to_encode: dict[str, Any] = {"sub": str(subject), "exp": expire}
+    if additional_claims:
+        to_encode.update(additional_claims)
+
+    return jwt.encode(
         to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
     )
-    return encoded_jwt
+
+
+def decode_access_token(token: str) -> dict[str, Any]:
+    try:
+        return jwt.decode(
+            token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
+        )
+    except JWTError as e:
+        raise UnauthorizedException("Invalid or expired token") from e

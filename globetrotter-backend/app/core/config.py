@@ -14,5 +14,14 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     ENVIRONMENT: str = "development"
 
+    UPLOAD_DIR: str = "uploads/photos"
+    MAX_UPLOAD_SIZE_MB: int = 5
+    ALLOWED_IMAGE_CONTENT_TYPES: list[str] = [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+    ]
+    PUBLIC_BASE_URL: str = "http://localhost:8000"
+
 
 settings = Settings()

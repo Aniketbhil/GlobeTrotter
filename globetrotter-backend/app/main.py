@@ -1,5 +1,9 @@
-from fastapi import FastAPI
+import os
 
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+
+from app.core.config import settings
 from app.features.activities.router import router as activities_router
 from app.features.admin.router import router as admin_router
 from app.features.auth.router import router as auth_router
@@ -13,10 +17,20 @@ from app.features.trip_activities.router import (
 from app.features.trips.router import router as trips_router
 from app.features.users.router import router as users_router
 
+os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+
 app = FastAPI(
     title="GlobeTrotter API",
     version="0.1.0",
     description="GlobeTrotter FastAPI backend service",
+)
+
+upload_base_dir = settings.UPLOAD_DIR.split("/")[0]
+os.makedirs(upload_base_dir, exist_ok=True)
+app.mount(
+    f"/{upload_base_dir}",
+    StaticFiles(directory=upload_base_dir),
+    name="uploads",
 )
 
 
@@ -25,7 +39,7 @@ async def health_check():
     return {"status": "ok"}
 
 
-app.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(auth_router)
 app.include_router(users_router, prefix="/api/v1/users", tags=["users"])
 app.include_router(trips_router, prefix="/api/v1/trips", tags=["trips"])
 app.include_router(stops_router, prefix="/api/v1/stops", tags=["stops"])

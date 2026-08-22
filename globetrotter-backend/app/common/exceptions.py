@@ -25,3 +25,22 @@ class ForbiddenException(HTTPException):
         self, detail: str = "Not enough permissions to perform this operation"
     ):
         super().__init__(status_code=status.HTTP_403_FORBIDDEN, detail=detail)
+
+
+class ConflictException(HTTPException):
+    def __init__(self, detail: str = "Resource already exists"):
+        super().__init__(status_code=status.HTTP_409_CONFLICT, detail=detail)
+
+
+class PayloadTooLargeException(HTTPException):
+    def __init__(self, detail: str = "File size exceeds maximum allowed limit"):
+        super().__init__(status_code=status.HTTP_413_CONTENT_TOO_LARGE, detail=detail)
+
+
+# Aliases for domain layer naming conventions
+NotFoundError = NotFoundException
+BadRequestError = BadRequestException
+UnauthorizedError = UnauthorizedException
+ForbiddenError = ForbiddenException
+ConflictError = ConflictException
+PayloadTooLargeError = PayloadTooLargeException
