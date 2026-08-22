@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Map, Clock, Plus } from 'lucide-react';
+import { ArrowLeft, Map, Clock, Plus, Calendar, MapPin } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card, CardContent } from '../../components/ui/Card';
 import { getItinerary } from './itineraryApi';
@@ -43,9 +43,26 @@ export const ItineraryBuilder = () => {
         <ArrowLeft size={16} className="mr-2" /> Back to Dashboard
       </Link>
       
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold font-manrope text-text-primary">{itinerary.trip_name}</h1>
-        <p className="text-text-secondary mt-1">Build your itinerary section by section.</p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-surface p-6 rounded-2xl border border-border-default shadow-sm">
+        <div>
+          <h1 className="text-3xl font-bold font-manrope text-text-primary">{itinerary.trip_name}</h1>
+          <div className="flex items-center gap-2 mt-2 text-sm text-text-secondary">
+            <Calendar size={16} className="text-primary" />
+            <span>{new Date(itinerary.start_date).toLocaleDateString()} - {new Date(itinerary.end_date).toLocaleDateString()}</span>
+          </div>
+        </div>
+        
+        {/* Updated Header Actions (Includes Budget Link) */}
+        <div className="flex gap-3 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+          <Link to={`/trips/${tripId}/budget`}>
+            <Button variant="secondary" className="gap-2 shrink-0">
+               View Budget
+            </Button>
+          </Link>
+          <Button onClick={() => setIsAddStopModalOpen(true)} className="gap-2 shrink-0">
+            <Plus size={18} /> Add Section
+          </Button>
+        </div>
       </div>
 
       {/* Screen 5 Layout Implementation */}
@@ -62,7 +79,7 @@ export const ItineraryBuilder = () => {
         <div className="space-y-6">
           {itinerary.days.map((day, index) => (
             <Card key={day.date} className="overflow-hidden border-border-strong shadow-sm hover:border-primary/40 transition-colors">
-              {/* Card Header perfectly matching Screen 5 */}
+              {/* Card Header matching Screen 5 */}
               <div className="bg-surface-muted p-5 border-b border-border-subtle flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                 <div>
                   <h3 className="text-xl font-bold font-manrope text-text-primary">
@@ -100,7 +117,6 @@ export const ItineraryBuilder = () => {
                   )}
                 </div>
 
-                {/* Here is the Add Activity Button! */}
                 <Button 
                   variant="secondary" 
                   size="sm" 
@@ -113,7 +129,7 @@ export const ItineraryBuilder = () => {
             </Card>
           ))}
           
-          {/* Add Another Section Button (Screen 5) */}
+          {/* Add Another Section Button */}
           <Button onClick={() => setIsAddStopModalOpen(true)} className="w-full py-6 text-lg rounded-2xl border-2 border-dashed border-primary bg-primary-soft text-primary hover:bg-primary/10 hover:border-primary hover:text-primary-active transition-all">
             + Add another Section
           </Button>

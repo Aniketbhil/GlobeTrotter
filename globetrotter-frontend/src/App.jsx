@@ -6,6 +6,7 @@ import { ResetPassword } from './features/auth/ResetPassword';
 import { Dashboard } from './features/trips/Dashboard';
 import { CreateTrip } from './features/trips/CreateTrip';
 import { ItineraryBuilder } from './features/itinerary/ItineraryBuilder';
+import { TripBudget } from './features/budget/TripBudget'; // <--- NEW
 import { AppLayout } from './components/layouts/AppLayout';
 import { useAuthStore } from './store/authStore';
 
@@ -29,9 +30,9 @@ export default function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           
-          {/* New Trip Routes */}
           <Route path="trips/new" element={<CreateTrip />} />
           <Route path="trips/:tripId/itinerary" element={<ItineraryBuilder />} />
+          <Route path="trips/:tripId/budget" element={<TripBudget />} /> {/* <--- NEW */}
         </Route>
         
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
