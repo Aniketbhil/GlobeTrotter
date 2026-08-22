@@ -3,6 +3,7 @@ import { create } from 'zustand';
 export const useAuthStore = create((set) => ({
   token: localStorage.getItem('globeTrotter_token') || null,
   user: null,
+  isUserLoading: false,
   
   setToken: (token) => {
     localStorage.setItem('globeTrotter_token', token);
@@ -15,4 +16,5 @@ export const useAuthStore = create((set) => ({
   },
   
   setUser: (user) => set({ user }),
+  setLoading: (isLoading) => set({ isUserLoading: isLoading }),
 }));
