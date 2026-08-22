@@ -1,37 +1,55 @@
 import { useEffect, useState } from 'react';
-import { Plus, MapPin, Calendar, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Plus, MapPin, Calendar, ArrowRight, Trash2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { Card, CardContent } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
-import { getGroupedTrips } from './tripsApi';
+import { getGroupedTrips, deleteTrip } from './tripsApi';
 import { useAuthStore } from '../../store/authStore';
 
 export const Dashboard = () => {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const [groupedTrips, setGroupedTrips] = useState({ ongoing: [], upcoming: [], completed: [] });
   const [isLoading, setIsLoading] = useState(true);
 
+  const fetchTrips = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getGroupedTrips();
+      setGroupedTrips(data);
+    } catch (error) {
+      console.error("Failed to load trips", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchTrips = async () => {
-      try {
-        const data = await getGroupedTrips();
-        setGroupedTrips(data);
-      } catch (error) {
-        console.error("Failed to load trips", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchTrips();
   }, []);
 
   const totalTrips = groupedTrips.ongoing.length + groupedTrips.upcoming.length + groupedTrips.completed.length;
 
-  // FIXED: Wrapped the Card in a Link to the itinerary page
+  const handleDeleteTrip = async (e, tripId) => {
+    e.preventDefault(); 
+    e.stopPropagation();
+    if (window.confirm("Are you sure you want to delete this trip?")) {
+      try {
+        await deleteTrip(tripId);
+        fetchTrips(); // Refresh the dashboard after deletion
+      } catch (error) {
+        alert("Failed to delete trip.");
+      }
+    }
+  };
+
   const TripCard = ({ trip }) => (
-    <Link to={`/trips/${trip.id}/itinerary`} className="block h-full outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded-2xl">
-      <Card className="hover:border-primary/50 hover:shadow-md transition-all group cursor-pointer h-full">
+    <div 
+      onClick={() => navigate(`/trips/${trip.id}/itinerary`)} 
+      className="block h-full outline-none rounded-2xl cursor-pointer focus-visible:ring-2 focus-visible:ring-border-focus"
+    >
+      <Card className="hover:border-primary/50 hover:shadow-md transition-all group h-full relative">
         <div className="h-32 bg-surface-muted rounded-t-2xl relative overflow-hidden">
           {trip.cover_photo_url ? (
             <img src={trip.cover_photo_url} alt={trip.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -40,11 +58,20 @@ export const Dashboard = () => {
               <MapPin className="text-primary opacity-50" size={32} />
             </div>
           )}
-          <div className="absolute top-3 right-3">
+          <div className="absolute top-3 left-3">
             <Badge variant={trip.status === 'ongoing' ? 'warning' : trip.status === 'upcoming' ? 'primary' : 'success'}>
               {trip.status.charAt(0).toUpperCase() + trip.status.slice(1)}
             </Badge>
           </div>
+          
+          {/* Delete Button */}
+          <button 
+            onClick={(e) => handleDeleteTrip(e, trip.id)}
+            className="absolute top-3 right-3 p-1.5 bg-surface/80 hover:bg-error hover:text-white text-error rounded-lg backdrop-blur-sm transition-colors opacity-0 group-hover:opacity-100"
+            title="Delete Trip"
+          >
+            <Trash2 size={16} />
+          </button>
         </div>
         <CardContent className="pt-4">
           <h3 className="font-manrope text-lg font-semibold text-text-primary truncate">{trip.name}</h3>
@@ -54,7 +81,7 @@ export const Dashboard = () => {
           </div>
         </CardContent>
       </Card>
-    </Link>
+    </div>
   );
 
   return (

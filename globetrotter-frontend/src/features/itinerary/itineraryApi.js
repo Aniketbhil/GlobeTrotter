@@ -29,3 +29,13 @@ export const addTripActivity = async (tripId, stopId, activityData) => {
   const response = await api.post(`/api/trips/${tripId}/stops/${stopId}/activities`, activityData);
   return response.data;
 };
+
+export const deleteStop = async (tripId, stopId) => {
+  const response = await api.delete(`/api/trips/${tripId}/stops/${stopId}`);
+  return response.data;
+};
+
+export const deleteTripActivity = async (tripId, stopId, activityId) => {
+  const response = await api.delete(`/api/trips/${tripId}/stops/${stopId}/activities/${activityId}`);
+  return response.data;
+};
