@@ -1,34 +1,61 @@
-import { api } from '../../config/api';
+import { api } from "../../config/api";
 
 export const login = async (email, password) => {
   const formData = new URLSearchParams();
-  formData.append('username', email);
-  formData.append('password', password);
+  formData.append("username", email);
+  formData.append("password", password);
 
-  const response = await api.post('/api/auth/login', formData, {
+  const response = await api.post("/api/auth/login", formData, {
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
+      "Content-Type": "application/x-www-form-urlencoded",
     },
   });
   return response.data;
 };
 
 export const signup = async (userData) => {
-  const response = await api.post('/api/auth/signup', userData);
+  const response = await api.post("/api/auth/signup", userData);
   return response.data;
 };
 
 export const forgotPassword = async (email) => {
-  const response = await api.post('/api/auth/forgot-password', { email });
+  const response = await api.post("/api/auth/forgot-password", { email });
   return response.data;
 };
 
 export const resetPassword = async (token, new_password) => {
-  const response = await api.post('/api/auth/reset-password', { token, new_password });
+  const response = await api.post("/api/auth/reset-password", {
+    token,
+    new_password,
+  });
   return response.data;
 };
 
 export const getMe = async () => {
-  const response = await api.get('/api/auth/me');
+  const response = await api.get("/api/auth/me");
+  return response.data;
+};
+
+export const updateMe = async (data) => {
+  const response = await api.patch("/api/auth/me", data);
+  return response.data;
+};
+
+export const deleteMe = async () => {
+  const response = await api.delete("/api/auth/me");
+  return response.data;
+};
+
+export const uploadPhoto = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await api.post("/api/auth/me/photo", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data;
+};
+
+export const removePhoto = async () => {
+  const response = await api.delete("/api/auth/me/photo");
   return response.data;
 };
