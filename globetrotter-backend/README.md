@@ -25,7 +25,17 @@ Run Alembic database migrations:
 uv run alembic upgrade head
 ```
 
-### 4. Running the Development API Server
+### 4. Seeding Reference Data
+
+Seed cities and activities reference data:
+
+```bash
+uv run python -m app.scripts.seed_reference_data
+```
+
+The seed script is idempotent — existing records are updated and new records are inserted. Additional rows can be appended to `seed_data/cities.csv` or `seed_data/activities.csv` and re-run safely at any time.
+
+### 5. Running the Development API Server
 
 Start the API server with auto-reload:
 
