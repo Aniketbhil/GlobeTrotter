@@ -2,12 +2,14 @@ import math
 from uuid import UUID
 
 from sqlalchemy import func
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.common.exceptions import ConflictError, NotFoundError
 from app.features.activities.models import Activity
 from app.features.cities.models import City
 from app.features.cities.schemas import CityCreate, CityListParams, CityUpdate
+from app.features.stops.models import Stop
 
 
 def search_cities(db: Session, params: CityListParams) -> tuple[list[City], int, int]:
@@ -103,7 +105,13 @@ def delete_city(db: Session, city_id: UUID) -> None:
     if activity_count > 0:
         raise ConflictError("Cannot delete city that has referencing activities")
 
-    # TODO: Check if any Stop references this city once stops feature is built
+    stop_count = db.query(Stop).filter(Stop.city_id == city_id).count()
+    if stop_count > 0:
+        raise ConflictError("Cannot delete city that has referencing stops")
 
-    db.delete(city)
-    db.commit()
+    try:
+        db.delete(city)
+        db.commit()
+    except IntegrityError as e:
+        db.rollback()
+        raise ConflictError("Cannot delete city referenced by other resources") from e

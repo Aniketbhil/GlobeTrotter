@@ -1,5 +1,9 @@
 from fastapi import HTTPException, status
 
+HTTP_422_STATUS = getattr(
+    status, "HTTP_422_UNPROCESSABLE_CONTENT", status.HTTP_422_UNPROCESSABLE_ENTITY
+)
+
 
 class NotFoundException(HTTPException):
     def __init__(self, detail: str = "Resource not found"):
@@ -37,6 +41,11 @@ class PayloadTooLargeException(HTTPException):
         super().__init__(status_code=status.HTTP_413_CONTENT_TOO_LARGE, detail=detail)
 
 
+class UnprocessableEntityException(HTTPException):
+    def __init__(self, detail: str = "Unprocessable entity"):
+        super().__init__(status_code=HTTP_422_STATUS, detail=detail)
+
+
 # Aliases for domain layer naming conventions
 NotFoundError = NotFoundException
 BadRequestError = BadRequestException
@@ -44,3 +53,4 @@ UnauthorizedError = UnauthorizedException
 ForbiddenError = ForbiddenException
 ConflictError = ConflictException
 PayloadTooLargeError = PayloadTooLargeException
+UnprocessableEntityError = UnprocessableEntityException
