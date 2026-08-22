@@ -1,9 +1,10 @@
 import math
 from uuid import UUID
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.common.exceptions import NotFoundError
+from app.common.exceptions import ConflictError, NotFoundError
 from app.features.activities.models import Activity
 from app.features.activities.schemas import (
     ActivityCreate,
@@ -11,6 +12,7 @@ from app.features.activities.schemas import (
     ActivityUpdate,
 )
 from app.features.cities.models import City
+from app.features.trip_activities.models import TripActivity
 
 
 def search_activities(
@@ -96,7 +98,17 @@ def update_activity(db: Session, activity_id: UUID, data: ActivityUpdate) -> Act
 def delete_activity(db: Session, activity_id: UUID) -> None:
     activity = get_activity(db, activity_id)
 
-    # TODO: Check if any TripActivity references this activity once trip_activities feature is built
+    trip_activity_count = (
+        db.query(TripActivity).filter(TripActivity.activity_id == activity_id).count()
+    )
+    if trip_activity_count > 0:
+        raise ConflictError("Cannot delete activity that is scheduled in trip stops")
 
-    db.delete(activity)
-    db.commit()
+    try:
+        db.delete(activity)
+        db.commit()
+    except IntegrityError as e:
+        db.rollback()
+        raise ConflictError(
+            "Cannot delete activity referenced by other resources"
+        ) from e

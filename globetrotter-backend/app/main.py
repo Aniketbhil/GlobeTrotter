@@ -44,12 +44,8 @@ app.include_router(cities_router)
 app.include_router(activities_router)
 app.include_router(trips_router)
 app.include_router(stops_router)
+app.include_router(trip_activities_router)
 app.include_router(users_router, prefix="/api/v1/users", tags=["users"])
-app.include_router(
-    trip_activities_router,
-    prefix="/api/v1/trip-activities",
-    tags=["trip-activities"],
-)
 app.include_router(budget_router, prefix="/api/v1/budget", tags=["budget"])
 app.include_router(sharing_router, prefix="/api/v1/sharing", tags=["sharing"])
 app.include_router(admin_router, prefix="/api/v1/admin", tags=["admin"])
