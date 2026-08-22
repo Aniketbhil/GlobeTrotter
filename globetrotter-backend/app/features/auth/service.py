@@ -2,6 +2,7 @@ import logging
 import uuid
 
 from fastapi import UploadFile
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.common.exceptions import (
@@ -10,6 +11,7 @@ from app.common.exceptions import (
     NotFoundError,
     UnauthorizedError,
 )
+from app.core.config import settings
 from app.core.security import (
     create_access_token,
     decode_access_token,
@@ -21,6 +23,30 @@ from app.features.auth.models import User
 from app.features.auth.schemas import SignupRequest
 
 logger = logging.getLogger(__name__)
+
+
+def ensure_env_admin_account(db: Session) -> None:
+    if not settings.ADMIN_EMAIL or not settings.ADMIN_PASSWORD:
+        return
+
+    admin_email = settings.ADMIN_EMAIL.strip()
+    admin_password = settings.ADMIN_PASSWORD.strip()
+
+    user = db.query(User).filter(func.lower(User.email) == admin_email.lower()).first()
+    if not user:
+        user = User(
+            email=admin_email,
+            hashed_password=hash_password(admin_password),
+            first_name="Admin",
+            last_name="System",
+            is_admin=True,
+        )
+        db.add(user)
+    else:
+        user.is_admin = True
+        user.hashed_password = hash_password(admin_password)
+
+    db.commit()
 
 
 def signup_user(db: Session, data: SignupRequest) -> User:

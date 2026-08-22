@@ -28,5 +28,8 @@ class Settings(BaseSettings):
     STAY_COST_MULTIPLIER: float = 25.0
     MEAL_COST_PER_DAY: float = 30.0
 
+    ADMIN_EMAIL: str | None = None
+    ADMIN_PASSWORD: str | None = None
+
 
 settings = Settings()
