@@ -14,6 +14,7 @@ import { ItineraryBuilder } from './features/itinerary/ItineraryBuilder';
 import { TripBudget } from './features/budget/TripBudget';
 import { CalendarView } from './features/calendar/CalendarView';
 import { Profile } from './features/profile/Profile';
+import { Explore } from './features/explore/Explore'; // <--- IMPORT EXPLORE
 
 // Sharing & Admin Pages
 import { PublicItinerary } from './features/sharing/PublicItinerary';
@@ -33,15 +34,11 @@ const ProtectedRoute = ({ children }) => {
 
 // Admin Only Route Wrapper
 const AdminRoute = ({ children }) => {
-  // FIXED: Separated the selectors to prevent Zustand infinite loop crashes
   const token = useAuthStore(state => state.token);
   const user = useAuthStore(state => state.user);
 
   if (!token) return <Navigate to="/login" replace />;
-  
-  // Only redirect to dashboard if we have the user data AND they are explicitly not an admin
   if (user && user.is_admin === false) return <Navigate to="/dashboard" replace />;
-  
   return children;
 };
 
@@ -71,6 +68,7 @@ export default function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="calendar" element={<CalendarView />} />
+          <Route path="explore" element={<Explore />} /> {/* <--- ADDED EXPLORE ROUTE */}
           <Route path="profile" element={<Profile />} />
           
           {/* Trip Workflows */}
